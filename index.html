@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JERRY STORE | CLOUD</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        :root { --bg: #0a0c10; --card: #12151c; --acc: #007bff; --txt: #b0b8c4; }
+        body { background: var(--bg); color: var(--txt); font-family: sans-serif; margin: 0; padding: 20px; }
+        .header { text-align: center; padding: 30px 0; }
+        .header h1 { color: #fff; letter-spacing: 5px; margin: 0; text-transform: uppercase; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        .card { background: var(--card); border: 1px solid #1e232d; border-radius: 12px; overflow: hidden; transition: 0.3s; }
+        .card:hover { border-color: var(--acc); transform: translateY(-5px); }
+        .card img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid #1e232d; }
+        .card-info { padding: 15px; }
+        .card-info h3 { margin: 0 0 10px 0; color: #fff; }
+        .card-info p { font-size: 13px; margin: 5px 0; }
+        .card-info span { color: var(--acc); font-weight: bold; }
+        code { background: #000; color: #f1c40f; padding: 2px 5px; border-radius: 4px; }
+        .dl { display: block; text-align: center; background: var(--acc); color: #fff; text-decoration: none; padding: 10px; border-radius: 6px; margin-top: 15px; font-weight: bold; }
+        #adm { max-width: 400px; margin: 0 auto 30px auto; background: var(--card); padding: 20px; border-radius: 12px; display: none; }
+        input { width: 94%; padding: 10px; margin: 5px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; }
+        #trig { position: fixed; bottom: 10px; right: 10px; opacity: 0.1; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>JERRY STORE</h1>
+        <p style="font-size: 10px; color: var(--acc);">PREMIUM CLOUD STORAGE</p>
+    </div>
+    <div id="adm">
+        <input type="text" id="u" placeholder="User">
+        <input type="password" id="p" placeholder="Pass">
+        <hr>
+        <input type="text" id="n" placeholder="File Name">
+        <input type="text" id="a" placeholder="Author">
+        <input type="text" id="c" placeholder="Command">
+        <input type="text" id="f" placeholder="Fitur">
+        <input type="text" id="pr" placeholder="Link Preview">
+        <input type="text" id="l" placeholder="Link File">
+        <button onclick="uploadFile()" class="dl" style="width:100%; border:none; cursor:pointer;">SAVE DATA</button>
+    </div>
+    <div class="grid" id="list"></div>
+    <div id="trig" onclick="document.getElementById('adm').style.display='block'">ADMIN</div>
+    <script src="database.js"></script>
+</body>
+</html>
