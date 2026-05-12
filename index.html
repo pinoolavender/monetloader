@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>pinoolavender V2 | MonetLoader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --accent: #a020f0;
+            --accent-glow: rgba(160, 32, 240, 0.4);
+            --bg: #0a0a0a;
+            --card: #151515;
+            --border-subtle: #222;
+        }
+
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        @keyframes pulseSoft {
+            0% { box-shadow: 0 0 0 0 rgba(160, 32, 240, 0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(160, 32, 240, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(160, 32, 240, 0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .header-brand {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pfp-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .pfp-mini {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1.5px solid #333;
+            object-fit: cover;
+            background: #1a1a1a;
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 2px solid var(--bg);
+            animation: pulseSoft 2s infinite;
+        }
+
+        .store-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .store-name {
+            font-size: 1.3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .v2-tag {
+            font-size: 0.65rem;
+            opacity: 0.5;
+            font-weight: 400;
+            margin-top: -2px;
+            color: var(--accent);
+        }
+
+        .header-line {
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(to right, var(--accent), transparent);
+            margin-top: 5px;
+            border-radius: 2px;
+        }
+
+        .admin-tiny-btn {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            background: rgba(160, 32, 240, 0.1);
+            border: 1px solid rgba(160, 32, 240, 0.3);
+            color: #e0b3ff;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            z-index: 20;
+            transition: 0.25s;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .admin-tiny-btn i {
+            font-size: 12px;
+        }
+
+        .admin-tiny-btn:hover {
+            background: rgba(160, 32, 240, 0.3);
+            color: white;
+            border-color: var(--accent);
+            transform: scale(0.98);
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 160px auto 60px;
+            padding: 0 20px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .title-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 50px;
+        }
+
+        .monet-title {
+            font-size: 3.6rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0;
+        }
+
+        .red-video-badge {
+            position: absolute;
+            top: -70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 2px solid #ff3366;
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+            background: #000;
+            z-index: 5;
+        }
+
+        .red-video-badge video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 15px 0 25px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 16px 28px 16px 52px;
+            background: var(--card);
+            border: 1px solid #2a2a2a;
+            border-radius: 28px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.25s;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(160, 32, 240, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+
+        .script-list {
+            margin-top: 20px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .script-card {
+            background: var(--card);
+            padding: 22px 24px;
+            border-radius: 24px;
+            border: 1px solid #222;
+            transition: 0.2s ease;
+        }
+
+        .script-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            background: #171717;
+        }
+
+        .script-card h3 {
+            margin: 0 0 8px 0;
+            color: var(--accent);
+            font-size: 1.35rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .script-meta {
+            font-size: 0.7rem;
+            color: #888;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            border-bottom: 1px dashed #2a2a2a;
+            padding-bottom: 8px;
+        }
+
+        .script-desc {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin: 12px 0;
+            line-height: 1.45;
+            background: #0f0f0f;
+            padding: 12px;
+            border-radius: 16px;
+        }
+
+        .preview-img {
+            width: 100%;
+            border-radius: 18px;
+            margin-top: 12px;
+            border: 1px solid #2a2a2a;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        .btn-action {
+            background: linear-gradient(95deg, var(--accent), #c147e9);
+            color: white;
+            border: none;
+            padding: 10px 26px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(160, 32, 240, 0.4);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 98;
+            backdrop-filter: blur(5px);
+        }
+
+        .admin-sidebar {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 360px;
+            max-width: 90vw;
+            height: 100vh;
+            background: #0c0c12;
+            border-left: 2px solid var(--accent);
+            z-index: 200;
+            overflow-y: auto;
+            box-shadow: -8px 0 40px rgba(0, 0, 0, 0.6);
+            flex-direction: column;
+        }
+
+        .admin-sidebar.open {
+            display: flex;
+            animation: slideIn 0.2s ease;
+        }
+
+        .sidebar-header {
+            padding: 16px 18px;
+            border-bottom: 1px solid #1f1f2a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: #0c0c12;
+            z-index: 6;
+        }
+
+        .sidebar-header h2 {
+            color: var(--accent);
+            margin: 0;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .close-sidebar,
+        .logout-sidebar-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2c2c3a;
+            color: #ddd;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        .logout-sidebar-btn {
+            background: rgba(255, 70, 70, 0.1);
+            border-color: rgba(255, 70, 70, 0.3);
+            color: #ff8a8a;
+        }
+
+        .close-sidebar:hover,
+        .logout-sidebar-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+        }
+
+        .sidebar-body {
+            padding: 16px 18px;
+        }
+
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            padding: 12px 5px;
+            text-align: center;
+            border: 1px solid rgba(160, 32, 240, 0.2);
+        }
+
+        .stat-card i {
+            font-size: 18px;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .stat-card .stat-label {
+            font-size: 9px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 18px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-form input,
+        .admin-form textarea,
+        .admin-form select {
+            width: 100%;
+            padding: 10px 12px;
+            margin: 6px 0;
+            background: #111116;
+            border: 1px solid #292933;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .admin-list-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .admin-list-item h4 {
+            margin: 0 0 5px;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            border: none;
+            cursor: pointer;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-edit {
+            background: rgba(160, 32, 240, 0.2);
+            color: #cc99ff;
+        }
+
+        .btn-delete {
+            background: rgba(255, 50, 50, 0.15);
+            color: #ff8888;
+        }
+
+        .btn-link {
+            background: rgba(255, 255, 255, 0.06);
+            color: #bbb;
+        }
+
+        .role-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+
+        .role-ceo {
+            background: rgba(160, 32, 240, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(160, 32, 240, 0.4);
+        }
+
+        .role-team {
+            background: rgba(255, 180, 0, 0.15);
+            color: #ffcc44;
+        }
+
+        .modal-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #121218;
+            padding: 24px;
+            border-radius: 28px;
+            border: 1px solid var(--accent);
+            z-index: 300;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-box input,
+        .modal-box select,
+        .modal-box textarea {
+            width: 100%;
+            padding: 10px 12px;
+            margin: 8px 0;
+            background: #1a1a22;
+            border: 1px solid #2e2e3a;
+            color: white;
+            border-radius: 14px;
+            font-size: 13px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 28px;
+        }
+
+        .empty-state i {
+            font-size: 44px;
+            color: #2a2a2a;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-brand">
+    <div class="profile-area">
+        <div class="pfp-container">
+            <img src="https://i.ibb.co.com/nsLRnhSx/pinooo.png" class="pfp-mini" alt="CEO">
+            <div class="status-dot"></div>
+        </div>
+        <div class="store-info">
+            <div class="store-name">pinoolavender</div>
+            <div class="v2-tag">monetloader • unlimited share</div>
+        </div>
+    </div>
+    <div class="header-line"></div>
+</div>
+
+<button class="admin-tiny-btn" id="adminAccessBtn"><i class="fas fa-shield-alt"></i> <span id="adminBtnText">ADMIN</span></button>
+
+<div class="container">
+    <div class="title-wrapper">
+        <div class="red-video-badge">
+            <video autoplay loop muted playsinline>
+                <source src="video.mp4" type="video/mp4">
+            </video>
+        </div>
+        <h1 class="monet-title">monetloader</h1>
+    </div>
+    <div class="search-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" class="search-box" placeholder="Cari file berdasarkan nama..." onkeyup="filterScripts()">
+    </div>
+    <div id="display-list" class="script-list"></div>
+</div>
+
+<div id="overlay" class="overlay"></div>
+
+<div id="loginModal" class="modal-box">
+    <h3><i class="fas fa-lock"></i> ADMIN LOGIN</h3>
+    <input type="text" id="admU" placeholder="Username" autocomplete="off">
+    <input type="password" id="admP" placeholder="Password">
+    <button class="btn-action" onclick="attemptLogin()"><i class="fas fa-sign-in-alt"></i> VERIFY</button>
+    <button class="btn-cancel" onclick="closeLoginModal()" style="background:none; border:1px solid #333; border-radius:40px; padding:8px; margin-top:10px; color:#aaa; cursor:pointer;">Batal</button>
+</div>
+
+<div id="adminSidebar" class="admin-sidebar">
+    <div class="sidebar-header">
+        <h2 id="sidebarTitle"><i class="fas fa-crown"></i> CEO PANEL</h2>
+        <div class="sidebar-header-btns">
+            <button class="logout-sidebar-btn" id="forceLogoutBtn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            <button class="close-sidebar" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+    <div class="sidebar-body">
+        <div id="blockStats">
+            <div class="stat-cards">
+                <div class="stat-card"><i class="fas fa-download"></i><div class="stat-value" id="statDownloads">0</div><div class="stat-label">Download</div></div>
+                <div class="stat-card"><i class="fas fa-link"></i><div class="stat-value" id="statLinks">0</div><div class="stat-label">Link Aktif</div></div>
+                <div class="stat-card"><i class="fas fa-file"></i><div class="stat-value" id="statFiles">0</div><div class="stat-label">Total File</div></div>
+            </div>
+        </div>
+
+        <div class="admin-form">
+            <div class="section-title"><i class="fas fa-cloud-upload-alt"></i> Share File Baru</div>
+            <input type="text" id="shareFileName" placeholder="Nama File (wajib)">
+            <input type="text" id="shareAuthor" placeholder="Author / Creator">
+            <input type="text" id="sharePlatform" placeholder="Platform (Windows / Android / iOS)">
+            <input type="text" id="shareCommand" placeholder="Command (contoh: run file.exe)">
+            <textarea id="shareFitur" rows="2" placeholder="Fitur-fitur / deskripsi..."></textarea>
+            <input type="text" id="shareLink" placeholder="Link Download (wajib)">
+            <input type="text" id="sharePreview" placeholder="URL Preview Gambar (Imgbb)">
+            <button class="btn-action" onclick="uploadAdminShare()"><i class="fas fa-paper-plane"></i> Share Sekarang</button>
+        </div>
+
+        <div id="blockAdminList"></div>
+
+        <div>
+            <div class="section-title"><i class="fas fa-database"></i> File Yang Dishare (Admin)</div>
+            <div id="adminFileList"></div>
+        </div>
+    </div>
+</div>
+
+<div id="editModal" class="modal-box">
+    <h3><i class="fas fa-pen"></i> EDIT FILE</h3>
+    <input type="hidden" id="editFileId">
+    <input type="text" id="editFileName" placeholder="Nama File">
+    <input type="text" id="editAuthor" placeholder="Author">
+    <input type="text" id="editPlatform" placeholder="Platform">
+    <input type="text" id="editCommand" placeholder="Command">
+    <textarea id="editFitur" rows="2" placeholder="Fitur"></textarea>
+    <input type="text" id="editLink" placeholder="Link Download">
+    <input type="text" id="editPreview" placeholder="URL Preview">
+    <button class="btn-action" onclick="saveEdit()">Simpan Perubahan</button>
+    <button class="btn-cancel" onclick="closeModal('editModal')" style="margin-top:8px; background:none; border:1px solid #444;">Batal</button>
+</div>
+
+<div id="addAdminModal" class="modal-box">
+    <h3><i class="fas fa-user-shield"></i> TAMBAH ADMIN</h3>
+    <input type="text" id="newAdminUser" placeholder="Username">
+    <input type="password" id="newAdminPass" placeholder="Password">
+    <select id="newAdminRole">
+        <option value="CEO">CEO (full akses)</option>
+        <option value="admin team lavender">Admin Team Lavender</option>
+    </select>
+    <button class="btn-action" onclick="saveNewAdmin()">Tambah Admin</button>
+    <button class="btn-cancel" onclick="closeModal('addAdminModal')" style="background:none;">Batal</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCgQHRWaYgIN3zvmD26Due6QisBC-fOl2M",
+        authDomain: "database-1b7e5.firebaseapp.com",
+        databaseURL: "https://database-1b7e5-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "database-1b7e5",
+        storageBucket: "database-1b7e5.firebasestorage.app",
+        messagingSenderId: "1076843649087",
+        appId: "1:1076843649087:web:15b5222d2875d19571008a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let isLoggedIn = false;
+    let currentRole = null;
+
+    function openOverlay() { document.getElementById('overlay').style.display = 'block'; }
+    function closeOverlay() { document.getElementById('overlay').style.display = 'none'; }
+
+    function openSidebar() {
+        const sidebar = document.getElementById('adminSidebar');
+        sidebar.classList.add('open');
+        openOverlay();
+        loadAdminStats();
+        loadAdminFiles();
+        if(currentRole === 'CEO') loadAdminList();
+    }
+
+    function closeSidebar() {
+        document.getElementById('adminSidebar').classList.remove('open');
+        closeOverlay();
+    }
+
+    function openModal(id) {
+        document.getElementById(id).style.display = 'block';
+        openOverlay();
+    }
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+        closeOverlay();
+    }
+    function closeLoginModal() { closeModal('loginModal'); }
+
+    function updateAdminButton() {
+        const btn = document.getElementById('adminAccessBtn');
+        const span = document.getElementById('adminBtnText');
+        if(isLoggedIn && currentRole) {
+            span.innerText = currentRole === 'CEO' ? 'CEO PANEL' : 'TEAM PANEL';
+            btn.style.background = 'rgba(160,32,240,0.25)';
+            btn.style.borderColor = '#a020f0';
+        } else {
+            span.innerText = 'ADMIN';
+            btn.style.background = 'rgba(160,32,240,0.1)';
+            btn.style.borderColor = 'rgba(160,32,240,0.3)';
+        }
+    }
+
+    function checkSession() {
+        const user = localStorage.getItem('adminUser');
+        const role = localStorage.getItem('adminRole');
+        if(user && role) {
+            isLoggedIn = true;
+            currentRole = role;
+        } else {
+            isLoggedIn = false;
+            currentRole = null;
+        }
+        updateAdminButton();
+    }
+
+    function showAdminAccess() {
+        if(isLoggedIn) {
+            applySidebarRole();
+            openSidebar();
+        } else {
+            openModal('loginModal');
+        }
+    }
+
+    function applySidebarRole() {
+        const isCEO = (currentRole === 'CEO');
+        document.getElementById('blockStats').style.display = isCEO ? 'block' : 'none';
+        document.getElementById('blockAdminList').style.display = isCEO ? 'block' : 'none';
+        document.getElementById('sidebarTitle').innerHTML = isCEO ? '<i class="fas fa-crown"></i> CEO PANEL' : '<i class="fas fa-users"></i> TEAM LAVENDER PANEL';
+    }
+
+    async function attemptLogin() {
+        const u = document.getElementById('admU').value.trim();
+        const p = document.getElementById('admP').value;
+        if(!u || !p) { alert("Isi username & password"); return; }
+        try {
+            const res = await fetch('admin.json');
+            const master = await res.json();
+            if(u === master.username && p === master.password) {
+                setSession(u, master.role || 'CEO');
+                closeLoginModal();
+                applySidebarRole();
+                openSidebar();
+                loadAdminStats();
+                loadAdminFiles();
+                if(currentRole === 'CEO') loadAdminList();
+                return;
+            }
+            const snap = await db.ref('admins').orderByChild('username').equalTo(u).once('value');
+            if(snap.exists()) {
+                let valid = false;
+                snap.forEach(child => {
+                    if(child.val().password === p) { valid = true; setSession(u, child.val().role); }
+                });
+                if(valid) {
+                    closeLoginModal();
+                    applySidebarRole();
+                    openSidebar();
+                    loadAdminStats();
+                    loadAdminFiles();
+                    if(currentRole === 'CEO') loadAdminList();
+                } else alert("Password salah!");
+            } else alert("Akun tidak terdaftar!");
+        } catch(e) { alert("Gagal konek ke admin.json"); }
+    }
+
+    function setSession(u, r) {
+        localStorage.setItem('adminUser', u);
+        localStorage.setItem('adminRole', r);
+        isLoggedIn = true;
+        currentRole = r;
+        updateAdminButton();
+    }
+
+    function logout() {
+        localStorage.removeItem('adminUser');
+        localStorage.removeItem('adminRole');
+        isLoggedIn = false;
+        currentRole = null;
+        closeSidebar();
+        updateAdminButton();
+        alert("Anda telah logout dari panel admin.");
+    }
+
+    function loadAdminStats() {
+        db.ref('monet_scripts').once('value', (snap) => {
+            let dl = 0, links = 0, files = 0;
+            snap.forEach(ch => { let v = ch.val(); files++; if(v.l && v.l !== '#') links++; if(v.downloads) dl += v.downloads; });
+            document.getElementById('statDownloads').innerText = dl;
+            document.getElementById('statLinks').innerText = links;
+            document.getElementById('statFiles').innerText = files;
+        });
+    }
+
+    function loadAdminList() {
+        const container = document.getElementById('blockAdminList');
+        if(!container) return;
+        container.innerHTML = `<div class="section-title"><i class="fas fa-users-cog"></i> Kelola Admin</div>
+            <button class="btn-action" onclick="openModal('addAdminModal')" style="width:100%; font-size:12px; padding:8px; margin-bottom:12px;"><i class="fas fa-user-plus"></i> Tambah Admin</button>
+            <div id="adminUserList"></div>`;
+        db.ref('admins').on('value', (snap) => {
+            const listDiv = document.getElementById('adminUserList');
+            if(!listDiv) return;
+            listDiv.innerHTML = '';
+            if(!snap.exists()) { listDiv.innerHTML = '<p style="font-size:11px; color:#666;">Belum ada admin tambahan</p>'; return; }
+            snap.forEach(child => {
+                let d = child.val();
+                let isCeo = d.role === 'CEO';
+                listDiv.innerHTML += `<div class="admin-list-item"><h4><i class="fas fa-user-cog"></i> ${escapeHtml(d.username)} <span class="role-badge ${isCeo ? 'role-ceo' : 'role-team'}">${escapeHtml(d.role)}</span></h4><div class="item-actions"><button class="btn-sm btn-delete" onclick="kickAdmin('${child.key}','${escapeHtml(d.username)}')"><i class="fas fa-trash"></i> Kick</button></div></div>`;
+            });
+        });
+    }
+
+    function saveNewAdmin() {
+        let u = document.getElementById('newAdminUser').value.trim();
+        let p = document.getElementById('newAdminPass').value;
+        let r = document.getElementById('newAdminRole').value;
+        if(!u || !p) { alert("Username dan password wajib"); return; }
+        db.ref('admins').push({ username: u, password: p, role: r }).then(() => {
+            alert(`Admin ${u} berhasil ditambahkan`);
+            document.getElementById('newAdminUser').value = '';
+            document.getElementById('newAdminPass').value = '';
+            closeModal('addAdminModal');
+        });
+    }
+
+    function kickAdmin(id, name) {
+        if(confirm(`Hapus admin ${name} ?`)) db.ref('admins/' + id).remove();
+    }
+
+    function uploadAdminShare() {
+        let name = document.getElementById('shareFileName').value.trim();
+        let link = document.getElementById('shareLink').value.trim();
+        if(!name || !link) { alert("Nama file dan link download wajib diisi!"); return; }
+        let data = {
+            n: name,
+            a: document.getElementById('shareAuthor').value || "-",
+            platform: document.getElementById('sharePlatform').value || "",
+            c: document.getElementById('shareCommand').value || "",
+            f: document.getElementById('shareFitur').value || "",
+            l: link,
+            i: document.getElementById('sharePreview').value || "",
+            t: Date.now(),
+            downloads: 0
+        };
+        db.ref('monet_scripts').push(data).then(() => {
+            alert("File berhasil dishare! Semua pengguna bisa lihat.");
+            ['shareFileName','shareAuthor','sharePlatform','shareCommand','shareFitur','shareLink','sharePreview'].forEach(id => document.getElementById(id).value = '');
+            loadAdminFiles();
+            loadAdminStats();
+        }).catch(e => alert("Gagal share: "+e));
+    }
+
+    function loadAdminFiles() {
+        db.ref('monet_scripts').orderByChild('t').on('value', (snap) => {
+            let container = document.getElementById('adminFileList');
+            if(!container) return;
+            container.innerHTML = '';
+            let arr = [];
+            snap.forEach(c => arr.push({...c.val(), id: c.key}));
+            if(arr.length === 0) { container.innerHTML = '<p style="text-align:center; color:#666;">Belum ada file dishare</p>'; return; }
+            arr.reverse().forEach(s => {
+                container.innerHTML += `<div class="admin-list-item"><h4><i class="fas fa-file"></i> ${escapeHtml(s.n)}</h4>${s.a ? `<p><i class="fas fa-user"></i> ${escapeHtml(s.a)}</p>` : ''}<p><i class="fas fa-download"></i> ${s.downloads || 0} x</p><div class="item-actions"><button class="btn-sm btn-edit" onclick='editFile("${s.id}", ${JSON.stringify(s).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i> Edit</button>${currentRole === 'CEO' ? `<button class="btn-sm btn-delete" onclick="deleteFile('${s.id}')"><i class="fas fa-trash"></i> Hapus</button>` : ''}<a href="${s.l}" target="_blank"><button class="btn-sm btn-link"><i class="fas fa-external-link-alt"></i> Buka</button></a></div></div>`;
+            });
+        });
+    }
+
+    function editFile(id, data) {
+        document.getElementById('editFileId').value = id;
+        document.getElementById('editFileName').value = data.n || '';
+        document.getElementById('editAuthor').value = data.a || '';
+        document.getElementById('editPlatform').value = data.platform || '';
+        document.getElementById('editCommand').value = data.c || '';
+        document.getElementById('editFitur').value = data.f || '';
+        document.getElementById('editLink').value = data.l || '';
+        document.getElementById('editPreview').value = data.i || '';
+        openModal('editModal');
+    }
+
+    function saveEdit() {
+        let id = document.getElementById('editFileId').value;
+        let updates = {
+            n: document.getElementById('editFileName').value,
+            a: document.getElementById('editAuthor').value,
+            platform: document.getElementById('editPlatform').value,
+            c: document.getElementById('editCommand').value,
+            f: document.getElementById('editFitur').value,
+            l: document.getElementById('editLink').value,
+            i: document.getElementById('editPreview').value,
+            t: Date.now()
+        };
+        db.ref('monet_scripts/' + id).update(updates).then(() => { alert("File diupdate!"); closeModal('editModal'); loadAdminFiles(); });
+    }
+
+    function deleteFile(id) {
+        if(confirm("Hapus file secara permanen?")) db.ref('monet_scripts/' + id).remove().then(() => { alert("Terhapus"); loadAdminFiles(); loadAdminStats(); });
+    }
+
+    function updateDownloadCount(id, curr) {
+        db.ref('monet_scripts/' + id).update({ downloads: (curr || 0) + 1 });
+    }
+
+    function filterScripts() {
+        let val = document.getElementById('searchInput').value.toLowerCase();
+        let cards = document.getElementsByClassName('script-card');
+        for(let i=0;i<cards.length;i++) {
+            let title = cards[i].querySelector('h3')?.innerText.toLowerCase() || '';
+            cards[i].style.display = title.includes(val) ? '' : 'none';
+        }
+    }
+
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+    db.ref('monet_scripts').orderByChild('t').on('value', (snap) => {
+        let container = document.getElementById('display-list');
+        container.innerHTML = '';
+        let items = [];
+        snap.forEach(c => items.push({...c.val(), id: c.key}));
+        if(items.length === 0) { container.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i><p>Belum ada file dishare, login sebagai admin untuk share pertama</p></div>`; return; }
+        items.reverse().forEach(s => {
+            let meta = '';
+            if(s.a || s.platform || s.c) {
+                meta = '<div class="script-meta">';
+                if(s.a) meta += `<span><i class="fas fa-user"></i> ${escapeHtml(s.a)}</span>`;
+                if(s.platform) meta += `<span><i class="fas fa-mobile-alt"></i> ${escapeHtml(s.platform)}</span>`;
+                if(s.c) meta += `<span><i class="fas fa-terminal"></i> ${escapeHtml(s.c)}</span>`;
+                meta += '</div>';
+            }
+            container.innerHTML += `
+                <div class="script-card">
+                    <h3><i class="fas fa-cube"></i> ${escapeHtml(s.n)}</h3>
+                    ${meta}
+                    ${s.f ? `<div class="script-desc">${escapeHtml(s.f).replace(/\n/g,'<br>')}</div>` : ''}
+                    ${s.i ? `<img src="${s.i}" class="preview-img" loading="lazy" onerror="this.style.display='none'">` : ''}
+                    <a href="${s.l || '#'}" target="_blank" onclick="updateDownloadCount('${s.id}', ${s.downloads || 0})">
+                        <button class="btn-action"><i class="fas fa-download"></i> DOWNLOAD FILE</button>
+                    </a>
+                    <div style="margin-top:8px; font-size:11px; color:#666;"><i class="fas fa-eye"></i> ${s.downloads || 0} download</div>
+                </div>
+            `;
+        });
+    });
+
+    document.getElementById('adminAccessBtn').addEventListener('click', showAdminAccess);
+    window.addEventListener('load', () => { checkSession(); const vid = document.querySelector('.red-video-badge video'); if(vid) vid.play().catch(()=>{}); });
+</script>
+</body>
+</html>
