@@ -3,48 +3,651 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JERRY STORE | CLOUD</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>pinoolavender V2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
-        :root { --bg: #0a0c10; --card: #12151c; --acc: #007bff; --txt: #b0b8c4; }
-        body { background: var(--bg); color: var(--txt); font-family: sans-serif; margin: 0; padding: 20px; }
-        .header { text-align: center; padding: 30px 0; }
-        .header h1 { color: #fff; letter-spacing: 5px; margin: 0; text-transform: uppercase; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-        .card { background: var(--card); border: 1px solid #1e232d; border-radius: 12px; overflow: hidden; transition: 0.3s; }
-        .card:hover { border-color: var(--acc); transform: translateY(-5px); }
-        .card img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid #1e232d; }
-        .card-info { padding: 15px; }
-        .card-info h3 { margin: 0 0 10px 0; color: #fff; }
-        .card-info p { font-size: 13px; margin: 5px 0; }
-        .card-info span { color: var(--acc); font-weight: bold; }
-        code { background: #000; color: #f1c40f; padding: 2px 5px; border-radius: 4px; }
-        .dl { display: block; text-align: center; background: var(--acc); color: #fff; text-decoration: none; padding: 10px; border-radius: 6px; margin-top: 15px; font-weight: bold; }
-        #adm { max-width: 400px; margin: 0 auto 30px auto; background: var(--card); padding: 20px; border-radius: 12px; display: none; }
-        input { width: 94%; padding: 10px; margin: 5px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; }
-        #trig { position: fixed; bottom: 10px; right: 10px; opacity: 0.1; cursor: pointer; }
+        :root { --accent: #a020f0; --bg: #0a0a0a; --card: #151515; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+        
+        @keyframes pulseSoft {
+            0% { box-shadow: 0 0 0 0 rgba(160, 32, 240, 0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(160, 32, 240, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(160, 32, 240, 0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .header-brand { position: absolute; top: 25px; left: 25px; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
+        
+        .profile-area { display: flex; align-items: center; gap: 15px; }
+        
+        .pfp-container { position: relative; display: flex; align-items: center; }
+        .pfp-mini { width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid #333; object-fit: cover; }
+        
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; border: 2px solid var(--bg); animation: pulseSoft 2s infinite; }
+
+        .store-info { display: flex; flex-direction: column; }
+        .store-name { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
+        .v2-tag { font-size: 0.65rem; opacity: 0.4; font-weight: 400; margin-top: -2px; color: var(--accent); }
+
+        .header-line { width: 200px; height: 2px; background: linear-gradient(to right, var(--accent), transparent); margin-top: 5px; border-radius: 2px; }
+
+        .container { max-width: 650px; margin: 160px auto 50px; padding: 20px; text-align: center; position: relative; }
+        
+        .title-wrapper { position: relative; display: inline-block; margin-bottom: 45px; }
+        
+        .monet-title { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; color: #fff; margin: 0; display: inline-block; }
+        
+        .red-video-badge { 
+            position: absolute; 
+            top: -65px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 70px; 
+            height: 70px; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 2px solid #ff0000; 
+            box-shadow: 0 0 15px rgba(255,0,0,0.8); 
+            background: #000; 
+            z-index: 20; 
+        }
+        .red-video-badge video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block; 
+        }
+        
+        .search-box { 
+            width: 100%; 
+            padding: 18px 28px 18px 55px; 
+            background: var(--card); 
+            border: 1px solid #222; 
+            border-radius: 15px; 
+            color: #fff; 
+            font-size: 1rem; 
+            outline: none; 
+            transition: 0.3s; 
+            box-sizing: border-box; 
+        }
+        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(160, 32, 240, 0.2); }
+        
+        .search-wrapper { position: relative; width: 100%; }
+        .search-icon { 
+            position: absolute; 
+            left: 20px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: #888; 
+            font-size: 1.2rem; 
+            pointer-events: none; 
+            z-index: 2; 
+        }
+
+        .script-list { margin-top: 40px; text-align: left; }
+        .script-card { background: var(--card); padding: 25px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #222; transition: 0.3s; position: relative; }
+        .script-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .script-card h3 { margin: 0 0 10px 0; color: var(--accent); font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .script-card h3 i { font-size: 1.5rem; color: var(--accent); }
+        .script-card .script-meta { font-size: 0.75rem; color: #777; margin-bottom: 12px; display: flex; gap: 15px; flex-wrap: wrap; }
+        .script-card .script-desc { font-size: 0.9rem; color: #bbb; margin: 12px 0; line-height: 1.5; }
+        .preview-img { width: 100%; border-radius: 12px; margin-top: 15px; border: 1px solid #333; }
+        
+        .btn-action { background: linear-gradient(135deg, var(--accent), #ff6b9d); color: #fff; border: none; padding: 12px 28px; border-radius: 40px; font-weight: 800; cursor: pointer; margin-top: 15px; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .btn-action:hover { transform: scale(1.03); box-shadow: 0 5px 20px rgba(160,32,240,0.4); }
+        
+        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: 98; backdrop-filter: blur(4px); }
+        .hidden { display: none; }
+
+        .admin-login-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #ff6b9d);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(160,32,240,0.5);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .admin-login-btn:hover { transform: scale(1.1); }
+
+        .logout-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255,0,0,0.5);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .logout-btn:hover { transform: scale(1.1); }
+
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 380px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0a0f, #0f0f1a);
+            border-left: 2px solid var(--accent);
+            z-index: 200;
+            padding: 25px;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+        .admin-sidebar h2 { color: var(--accent); margin-bottom: 20px; font-size: 1.5rem; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .admin-sidebar h2 i { margin-right: 10px; }
+        .close-sidebar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .close-sidebar:hover { color: #ff4444; }
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            border: 1px solid rgba(160,32,240,0.3);
+        }
+        .stat-card i { font-size: 24px; color: var(--accent); margin-bottom: 8px; display: block; }
+        .stat-card .stat-value { font-size: 22px; font-weight: 800; color: #fff; }
+        .stat-card .stat-label { font-size: 11px; color: #888; margin-top: 5px; }
+        
+        .admin-form input, .admin-form textarea, .admin-form select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        .admin-form textarea { resize: vertical; }
+        .admin-form button { width: 100%; margin-top: 15px; }
+        
+        .admin-list { margin-top: 30px; }
+        .admin-list-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--accent);
+            position: relative;
+        }
+        .admin-list-item h4 { margin: 0 0 8px 0; color: var(--accent); font-size: 1rem; }
+        .admin-list-item p { margin: 5px 0; font-size: 12px; color: #aaa; }
+        .edit-item {
+            position: absolute;
+            top: 10px;
+            right: 70px;
+            background: rgba(160,32,240,0.2);
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        .edit-item:hover { background: rgba(160,32,240,0.5); color: #fff; }
+        .delete-item {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,0,0,0.2);
+            border: none;
+            color: #ff5555;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        .delete-item:hover { background: rgba(255,0,0,0.5); color: #fff; }
+        
+        input, textarea, select { outline: none; }
+        input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 30px;
+        }
+        .empty-state i { font-size: 50px; color: #444; margin-bottom: 15px; display: block; }
+        .empty-state p { color: #666; font-size: 1rem; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>JERRY STORE</h1>
-        <p style="font-size: 10px; color: var(--acc);">PREMIUM CLOUD STORAGE</p>
+
+    <div class="header-brand">
+        <div class="profile-area">
+            <div class="pfp-container">
+                <img src="https://i.ibb.co.com/nsLRnhSx/pinooo.png" class="pfp-mini" alt="CEO">
+                <div class="status-dot"></div>
+            </div>
+            <div class="store-info">
+                <div class="store-name">pinoolavender</div>
+                <div class="v2-tag">website share monetloader</div>
+            </div>
+        </div>
+        <div class="header-line"></div>
     </div>
-    <div id="adm">
-        <input type="text" id="u" placeholder="User">
-        <input type="password" id="p" placeholder="Pass">
-        <hr>
-        <input type="text" id="n" placeholder="File Name">
-        <input type="text" id="a" placeholder="Author">
-        <input type="text" id="c" placeholder="Command">
-        <input type="text" id="f" placeholder="Fitur">
-        <input type="text" id="pr" placeholder="Link Preview">
-        <input type="text" id="l" placeholder="Link File">
-        <button onclick="uploadFile()" class="dl" style="width:100%; border:none; cursor:pointer;">SAVE DATA</button>
+
+    <div class="container">
+        <div class="title-wrapper">
+            <div class="red-video-badge">
+                <video autoplay loop muted playsinline>
+                    <source src="video.mp4" type="video/mp4">
+                </video>
+            </div>
+            <h1 class="monet-title">monetloader</h1>
+        </div>
+        
+        <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-box" placeholder="Cari file..." onkeyup="filterScripts()">
+        </div>
+        
+        <div id="display-list" class="script-list"></div>
     </div>
-    <div class="grid" id="list"></div>
-    <div id="trig" onclick="document.getElementById('adm').style.display='block'">ADMIN</div>
-    <script src="database.js"></script>
+
+    <button class="admin-login-btn" id="adminLoginBtn" onclick="showLogin()">
+        <i class="fas fa-crown"></i>
+    </button>
+
+    <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+    </button>
+
+    <div id="overlay" class="overlay hidden" onclick="closeSidebar()"></div>
+
+    <div id="login-modal" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#111; padding:30px; border-radius:20px; border:1px solid var(--accent); z-index:150; width:90%; max-width:400px; display:none;">
+        <h3 style="margin-top:0; text-align:center; color: var(--accent);"><i class="fas fa-lock"></i> ADMIN LOGIN</h3>
+        <input type="text" id="admU" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;" placeholder="Username">
+        <input type="password" id="admP" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;" placeholder="Password">
+        <button class="btn-action" onclick="attemptLogin()" style="width:100%;">VERIFY</button>
+        <button onclick="closeLoginModal()" style="background:none; border:1px solid #333; margin-top:10px; width:100%; border-radius:8px; padding:10px; color:#aaa; cursor:pointer;">Batal</button>
+    </div>
+
+    <div id="adminSidebar" class="admin-sidebar hidden">
+        <button class="close-sidebar" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
+        <h2><i class="fas fa-crown"></i> CEO PANEL</h2>
+        
+        <div class="stat-cards">
+            <div class="stat-card">
+                <i class="fas fa-download"></i>
+                <div class="stat-value" id="statDownloads">0</div>
+                <div class="stat-label">Total Download</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-link"></i>
+                <div class="stat-value" id="statLinks">0</div>
+                <div class="stat-label">Total Link</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-file"></i>
+                <div class="stat-value" id="statFiles">0</div>
+                <div class="stat-label">Total File</div>
+            </div>
+        </div>
+        
+        <div class="admin-form" id="shareForm">
+            <h3><i class="fas fa-upload"></i> SHARE FILE BARU</h3>
+            <input type="text" id="shareFileName" placeholder="Nama File">
+            <input type="text" id="shareAuthor" placeholder="Author">
+            <input type="text" id="sharePlatform" placeholder="Platform (Windows/Android/iOS)">
+            <input type="text" id="shareCommand" placeholder="Command">
+            <textarea id="shareFitur" rows="3" placeholder="Fitur-fitur..."></textarea>
+            <input type="text" id="shareLink" placeholder="Link Download">
+            <input type="text" id="sharePreview" placeholder="URL Preview Gambar (Imgbb)">
+            <button class="btn-action" onclick="uploadAdminShare()"><i class="fas fa-paper-plane"></i> SHARE SEKARANG</button>
+        </div>
+        
+        <div class="admin-list">
+            <h3><i class="fas fa-history"></i> FILE YANG DI SHARE</h3>
+            <div id="adminFileList"></div>
+        </div>
+    </div>
+
+    <div id="editModal" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#111; padding:30px; border-radius:20px; border:1px solid var(--accent); z-index:250; width:90%; max-width:450px; display:none;">
+        <h3 style="margin-top:0; text-align:center; color: var(--accent);"><i class="fas fa-edit"></i> EDIT FILE</h3>
+        <input type="hidden" id="editFileId">
+        <input type="text" id="editFileName" placeholder="Nama File" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;">
+        <input type="text" id="editAuthor" placeholder="Author" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;">
+        <input type="text" id="editPlatform" placeholder="Platform" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;">
+        <input type="text" id="editCommand" placeholder="Command" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;">
+        <textarea id="editFitur" rows="3" placeholder="Fitur-fitur" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;"></textarea>
+        <input type="text" id="editLink" placeholder="Link Download" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;">
+        <input type="text" id="editPreview" placeholder="URL Preview Gambar" style="width:100%; padding:12px; margin:8px 0; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:8px; box-sizing:border-box;">
+        <button class="btn-action" onclick="saveEdit()" style="width:100%;"><i class="fas fa-save"></i> SIMPAN PERUBAHAN</button>
+        <button onclick="closeEditModal()" style="background:none; border:1px solid #333; margin-top:10px; width:100%; border-radius:8px; padding:10px; color:#aaa; cursor:pointer;">Batal</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgQHRWaYgIN3zvmD26Due6QisBC-fOl2M",
+            authDomain: "database-1b7e5.firebaseapp.com",
+            databaseURL: "https://database-1b7e5-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "database-1b7e5",
+            storageBucket: "database-1b7e5.firebasestorage.app",
+            messagingSenderId: "1076843649087",
+            appId: "1:1076843649087:web:15b5222d2875d19571008a"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        let isLoggedIn = false;
+
+        function checkSession() {
+            const session = localStorage.getItem('adminLoggedIn');
+            if(session === 'true') {
+                isLoggedIn = true;
+                document.getElementById('adminLoginBtn').classList.add('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+            } else {
+                isLoggedIn = false;
+                document.getElementById('adminLoginBtn').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.add('hidden');
+            }
+        }
+
+        function showLogin() { 
+            if(isLoggedIn) {
+                document.getElementById('adminSidebar').classList.remove('hidden');
+                document.getElementById('overlay').classList.remove('hidden');
+                loadAdminStats();
+                loadAdminFiles();
+            } else {
+                document.getElementById('login-modal').style.display = 'block';
+                document.getElementById('overlay').classList.remove('hidden');
+            }
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('login-modal').style.display = 'none';
+            document.getElementById('overlay').classList.add('hidden');
+        }
+        
+        function closeSidebar() { 
+            document.getElementById('adminSidebar').classList.add('hidden'); 
+            document.getElementById('overlay').classList.add('hidden'); 
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('overlay').classList.add('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            isLoggedIn = false;
+            document.getElementById('adminLoginBtn').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            document.getElementById('adminSidebar').classList.add('hidden');
+            alert("logout done");
+        }
+
+        async function attemptLogin() {
+            const u = document.getElementById('admU').value;
+            const p = document.getElementById('admP').value;
+            try {
+                const res = await fetch('admin.json');
+                const adm = await res.json();
+                if(u === adm.username && p === adm.password) {
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    isLoggedIn = true;
+                    document.getElementById('login-modal').style.display = 'none';
+                    document.getElementById('adminLoginBtn').classList.add('hidden');
+                    document.getElementById('logoutBtn').classList.remove('hidden');
+                    document.getElementById('adminSidebar').classList.remove('hidden');
+                    loadAdminStats();
+                    loadAdminFiles();
+                } else { alert("mau jadi admin? dm pinooganteng"); }
+            } catch(e) {
+                alert("Gagal verifikasi! Pastikan file admin.json tersedia.");
+            }
+        }
+
+        function uploadAdminShare() {
+            const fileName = document.getElementById('shareFileName').value;
+            const author = document.getElementById('shareAuthor').value;
+            const platform = document.getElementById('sharePlatform').value;
+            const command = document.getElementById('shareCommand').value;
+            const fitur = document.getElementById('shareFitur').value;
+            const link = document.getElementById('shareLink').value;
+            const preview = document.getElementById('sharePreview').value;
+            
+            if(!fileName || !link) {
+                alert("Nama file dan link download wajib diisi");
+                return;
+            }
+            
+            const data = {
+                n: fileName,
+                a: author || "",
+                platform: platform || "",
+                c: command || "",
+                f: fitur || "",
+                l: link,
+                i: preview || "",
+                t: Date.now(),
+                downloads: 0
+            };
+            
+            db.ref('monet_scripts').push(data).then(() => { 
+                alert("File berhasil di-share!"); 
+                document.getElementById('shareFileName').value = '';
+                document.getElementById('shareAuthor').value = '';
+                document.getElementById('sharePlatform').value = '';
+                document.getElementById('shareCommand').value = '';
+                document.getElementById('shareFitur').value = '';
+                document.getElementById('shareLink').value = '';
+                document.getElementById('sharePreview').value = '';
+                loadAdminStats();
+                loadAdminFiles();
+            }).catch(err => alert("Error: "+err));
+        }
+
+        function editFile(id, data) {
+            document.getElementById('editFileId').value = id;
+            document.getElementById('editFileName').value = data.n || '';
+            document.getElementById('editAuthor').value = data.a || '';
+            document.getElementById('editPlatform').value = data.platform || '';
+            document.getElementById('editCommand').value = data.c || '';
+            document.getElementById('editFitur').value = data.f || '';
+            document.getElementById('editLink').value = data.l || '';
+            document.getElementById('editPreview').value = data.i || '';
+            document.getElementById('editModal').style.display = 'block';
+            document.getElementById('overlay').classList.remove('hidden');
+        }
+
+        function saveEdit() {
+            const id = document.getElementById('editFileId').value;
+            const updatedData = {
+                n: document.getElementById('editFileName').value,
+                a: document.getElementById('editAuthor').value,
+                platform: document.getElementById('editPlatform').value,
+                c: document.getElementById('editCommand').value,
+                f: document.getElementById('editFitur').value,
+                l: document.getElementById('editLink').value,
+                i: document.getElementById('editPreview').value,
+                t: Date.now(),
+                downloads: 0
+            };
+            
+            db.ref('monet_scripts/' + id).update(updatedData).then(() => {
+                alert("File berhasil diupdate!");
+                closeEditModal();
+                loadAdminStats();
+                loadAdminFiles();
+            }).catch(err => alert("Error: "+err));
+        }
+
+        function deleteFile(id) {
+            if(confirm("Yakin ingin menghapus file ini?")) {
+                db.ref('monet_scripts/' + id).remove().then(() => {
+                    alert("File berhasil dihapus!");
+                    loadAdminStats();
+                    loadAdminFiles();
+                });
+            }
+        }
+
+        function updateDownloadCount(id, currentCount) {
+            db.ref('monet_scripts/' + id).update({ downloads: (currentCount || 0) + 1 });
+        }
+
+        function loadAdminStats() {
+            db.ref('monet_scripts').on('value', (snap) => {
+                let totalDownloads = 0;
+                let totalLinks = 0;
+                let totalFiles = 0;
+                snap.forEach(child => {
+                    const val = child.val();
+                    totalFiles++;
+                    if(val.l && val.l !== '#') totalLinks++;
+                    if(val.downloads) totalDownloads += val.downloads;
+                });
+                document.getElementById('statDownloads').innerText = totalDownloads;
+                document.getElementById('statLinks').innerText = totalLinks;
+                document.getElementById('statFiles').innerText = totalFiles;
+            });
+        }
+
+        function loadAdminFiles() {
+            db.ref('monet_scripts').orderByChild('t').on('value', (snap) => {
+                const container = document.getElementById('adminFileList');
+                container.innerHTML = '';
+                let items = [];
+                snap.forEach(c => items.push({...c.val(), id: c.key}));
+                items.reverse().forEach(s => {
+                    container.innerHTML += `
+                        <div class="admin-list-item">
+                            <button class="edit-item" onclick="editFile('${s.id}', ${JSON.stringify(s).replace(/"/g, '&quot;')})"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-item" onclick="deleteFile('${s.id}')"><i class="fas fa-trash"></i> Hapus</button>
+                            <h4><i class="fas fa-file-alt"></i> ${escapeHtml(s.n)}</h4>
+                            ${s.a ? `<p><i class="fas fa-user"></i> ${escapeHtml(s.a)}</p>` : ''}
+                            ${s.c ? `<p><i class="fas fa-terminal"></i> ${escapeHtml(s.c)}</p>` : ''}
+                            <p><i class="fas fa-download"></i> Download: ${s.downloads || 0}x</p>
+                            <a href="${s.l || '#'}" target="_blank"><button class="btn-action" style="padding:6px 16px; font-size:12px; margin-top:8px;"><i class="fas fa-download"></i> Link</button></a>
+                        </div>
+                    `;
+                });
+                if(items.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; color:#666;">Belum ada file yang dishare</p>';
+                }
+            });
+        }
+
+        function filterScripts() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('script-card');
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].getElementsByTagName("h3")[0]?.innerText || '';
+                cards[i].style.display = title.toLowerCase().includes(input) ? "" : "none";
+            }
+        }
+
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        db.ref('monet_scripts').orderByChild('t').on('value', (snap) => {
+            const container = document.getElementById('display-list');
+            container.innerHTML = '';
+            let items = [];
+            snap.forEach(c => items.push({...c.val(), id: c.key}));
+            
+            if(items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <p>Belum ada file yang dishare</p>
+                        <p style="font-size: 12px; margin-top: 10px;">Admin bisa login untuk share file pertama</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            items.reverse().forEach(s => {
+                let metaHtml = '';
+                if(s.a || s.platform || s.c) {
+                    metaHtml = '<div class="script-meta">';
+                    if(s.a) metaHtml += `<span><i class="fas fa-user"></i> ${escapeHtml(s.a)}</span>`;
+                    if(s.platform) metaHtml += `<span><i class="fas fa-mobile-alt"></i> ${escapeHtml(s.platform)}</span>`;
+                    if(s.c) metaHtml += `<span><i class="fas fa-terminal"></i> ${escapeHtml(s.c)}</span>`;
+                    metaHtml += '</div>';
+                }
+                
+                container.innerHTML += `
+                    <div class="script-card">
+                        <h3><i class="fas fa-file-alt"></i> ${escapeHtml(s.n)}</h3>
+                        ${metaHtml}
+                        ${s.f ? `<div class="script-desc">${escapeHtml(s.f).replace(/\n/g, '<br>')}</div>` : ''}
+                        ${s.i ? `<img src="${s.i}" class="preview-img" loading="lazy" onerror="this.style.display='none'">` : ''}
+                        <a href="${s.l || '#'}" target="_blank" onclick="updateDownloadCount('${s.id}', ${s.downloads || 0})"><button class="btn-action"><i class="fas fa-download"></i> DOWNLOAD</button></a>
+                        <div class="download-count"><i class="fas fa-chart-line"></i> ${s.downloads || 0} downloads</div>
+                    </div>
+                `;
+            });
+        });
+        
+        window.addEventListener('load', function() {
+            checkSession();
+            const video = document.querySelector('.red-video-badge video');
+            if(video) {
+                video.play().catch(e => console.log('Autoplay prevented:', e));
+            }
+        });
+    </script>
 </body>
 </html>
